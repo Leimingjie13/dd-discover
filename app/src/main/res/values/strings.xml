@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">DiscoverDD</string>
+    <string name="title">Discover</string>
+
+    <!-- Store Model defaults -->
+
+    <string name="average_rating">n/a</string>
+    <string name="closed">Closed</string>
+    <string name="delivery">Delivery</string>
+    <string name="description">Description goes here</string>
+    <string name="no_distance">over 9000</string>
+    <string name="distance_units">Miles</string>
+    <string name="full_address">1234 Door Dash Street, Palo Alto, CA 98765, USA</string>
+    <string name="id">-1</string>
+    <string name="isFalse">false</string>
+    <string name="isTrue">true</string>
+    <string name="name">Store Name</string>
+    <string name="open">Open</string>
+    <string name="phone_number">+19876543210</string>
+    <string name="no_ready_time">n/a</string>
+    <string name="takeout">Take-out</string>
+    <string name="time_default">2020–01–01T00:00:00Z</string>
+    <string name="unknown">Unknown</string>
+    <string name="uri_default">URI</string>
+
+
+    <string name="closes_in">Closes in:</string>
+    <string name="distance_label">Distance from you:</string>
+    <string name="get_food_label">Get your food in:</string>
+    <string name="hrs">Hrs</string>
+    <string name="mins">Mins</string>
+    <string name="rating_label">Rating</string>
+
+    <string name="distance">%1$s mi</string>
+    <string name="ready_time">%1$s minutes</string>
+    <string name="time_to_close">n/a</string>
+
+</resources>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.doordashproject.TouchPassthroughLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/search_result_view"
+    android:layout_width="match_parent"
+    android:layout_height="112dp"
+    android:background="@android:color/darker_gray"
+    android:focusableInTouchMode="true"
+    android:paddingBottom="1dp"
+    android:foreground="?android:attr/selectableItemBackground" >
+
+    <ImageView
+        android:id="@+id/small_cover_image"
+        android:layout_width="128dp"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/small_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/small_name"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:focusable="false"
+        android:cursorVisible="false"
+        android:clickable="false"
+        android:gravity="bottom|start"
+        android:paddingVertical="2dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="2dp"
+        android:scrollbarSize="0dp"
+        android:scrollbars="horizontal"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:inputType="textNoSuggestions"
+        android:text="@string/name"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/small_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/small_cover_image"
+        app:layout_constraintTop_toTopOf="parent"
+        android:autofillHints="@string/name" />
+
+    <TextView
+        android:id="@+id/small_description"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeMinTextSize="12dp"
+        android:autoSizeTextType="uniform"
+        android:background="@color/white"
+        android:paddingStart="4dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="2dp"
+        android:scrollbarSize="1dp"
+        android:scrollbars="vertical"
+        android:text="@string/description"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/small_ready_time"
+        app:layout_constraintStart_toEndOf="@id/small_cover_image"
+        app:layout_constraintTop_toBottomOf="@id/small_name" />
+
+    <TextView
+        android:id="@+id/small_ready_time"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:padding="2dp"
+        android:text="@string/no_ready_time"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/small_mins"
+        app:layout_constraintStart_toEndOf="@id/small_description"
+        app:layout_constraintTop_toBottomOf="@id/small_name" />
+
+    <TextView
+        android:id="@+id/small_mins"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        android:paddingVertical="2dp"
+        android:paddingHorizontal="8dp"
+        android:text="@string/mins"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/small_ready_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/small_ready_time"
+        app:layout_constraintTop_toTopOf="@id/small_ready_time" />
+
+</com.example.doordashproject.TouchPassthroughLayout>
