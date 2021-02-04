@@ -18,21 +18,40 @@ import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
-
 class ViewPagerAdapter(
     var vmClient: Client,
-    var fragment: Fragment?,
+    var _fragment: Fragment?,
     vararg var outline: Int)
     : RecyclerView.Adapter<BaseViewHolder>(), LifecycleObserver {
 
     private val selectedHolders = mutableListOf<BaseViewHolder>()
+    private val fragment get() = _fragment!!
 
     var isScrolling = false
     var pages = mutableListOf<BaseViewHolder>()
     var lastState: Bundle? = null
 
     lateinit var pager: ViewPager2
-    lateinit var pageChangeCallback: ViewPager2.OnPageChangeCallback
+    var pageChangeCallback: ViewPager2.OnPageChangeCallback =
+            object : ViewPager2.OnPageChangeCallback() {
+
+                override fun onPageScrolled(
+                        position: Int,
+                        positionOffset: Float,
+                        positionOffsetPixels: Int
+                ) {
+                    super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                    isScrolling = true
+                }
+                override fun onPageScrollStateChanged(state: Int) {
+                    super.onPageScrollStateChanged(state)
+
+                    if (state == ViewPager2.SCROLL_STATE_SETTLING) {
+                        pager.isUserInputEnabled = true
+                        isScrolling = false
+                    }
+                }
+            }
 
     init { EventBus.getDefault().register(this) }
 
@@ -40,30 +59,11 @@ class ViewPagerAdapter(
         parent: ViewGroup,
         viewType: Int,)
     : BaseViewHolder {
-        val inflater = LayoutInflater.from(fragment!!.requireContext())
+        val inflater = LayoutInflater.from(fragment.requireContext())
 
         return when (viewType) {
             Const.TYPE_CATALOG -> {
                 pager.isUserInputEnabled = false
-                pageChangeCallback =
-                    object : ViewPager2.OnPageChangeCallback() {
-
-                        override fun onPageScrolled(
-                            position: Int,
-                            positionOffset: Float,
-                            positionOffsetPixels: Int
-                        ) {
-                            super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-                            isScrolling = true
-                        }
-                        override fun onPageScrollStateChanged(state: Int) {
-                            super.onPageScrollStateChanged(state)
-                            if (state == ViewPager2.SCROLL_STATE_SETTLING) {
-                                pager.isUserInputEnabled = true
-                                isScrolling = false
-                            }
-                        }
-                    }
                 pager.registerOnPageChangeCallback(pageChangeCallback)
 
                 val binding = ResultListBinding
@@ -74,7 +74,7 @@ class ViewPagerAdapter(
 
                 ListPageHolder(binding, Const.TYPE_CATALOG)
                         .apply {
-                            initialize(vmClient, fragment!!) {
+                            initialize(vmClient, fragment) {
                                 pager.isUserInputEnabled = true
                             }
                                 .layoutManager?.onRestoreInstanceState(
@@ -106,9 +106,9 @@ class ViewPagerAdapter(
                     MainScope().launch {
                         job?.join()
                         holder.id = it
-                        holder.updateViews(vmClient, fragment!!)
+                        holder.updateViews(vmClient, fragment)
                         holder.formatForOrientation(
-                            fragment?.resources?.configuration!!.orientation)
+                            fragment.resources.configuration!!.orientation)
                     }
                 }
             }
@@ -128,9 +128,9 @@ class ViewPagerAdapter(
                             MainScope().launch {
                                 job?.join()
                                 holder.id = it
-                                holder.updateViews(vmClient, fragment!!)
+                                holder.updateViews(vmClient, fragment)
                                 holder.formatForOrientation(
-                                    fragment?.resources?.configuration!!.orientation)
+                                    fragment.resources?.configuration!!.orientation)
                             }
                         }
                     }
@@ -148,7 +148,7 @@ class ViewPagerAdapter(
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
         pager.unregisterOnPageChangeCallback(pageChangeCallback)
-        fragment = null
+        _fragment = null
     }
 
     override fun getItemCount(): Int {

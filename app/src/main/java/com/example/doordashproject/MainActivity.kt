@@ -9,12 +9,13 @@ import org.greenrobot.eventbus.EventBus
 
 class MainActivity : AppCompatActivity() {
 
-    private var binding: MainActivityBinding? = null
+    private var _binding: MainActivityBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = MainActivityBinding.inflate(layoutInflater).apply {
+        _binding = MainActivityBinding.inflate(layoutInflater).apply {
             ExceptionHandler.displayToast = {
                 Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show() }
 
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding = null
+        _binding = null
     }
 
     class BackEvent(private val resumeBack: () -> Unit) {
