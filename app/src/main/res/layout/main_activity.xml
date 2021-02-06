@@ -37,6 +37,19 @@
             android:textAlignment="center"
             android:textSize="28sp" />
 
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/debug_info"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scrollbarSize="0dp"
+            android:scrollbars="horizontal"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:visibility="invisible"
+            android:inputType="textNoSuggestions"
+            android:clickable="false"
+            android:focusable="false" />
+
     </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.fragment.app.FragmentContainerView

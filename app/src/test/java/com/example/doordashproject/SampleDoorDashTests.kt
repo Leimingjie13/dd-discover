@@ -32,7 +32,7 @@ class SampleDoorDashTests {
         store!!.nextCloseTime = "2020-12-31'T'12:00:00'Z'"
 
         store2 = StoreModel(100)
-        store2!!.nextCloseTime = "2021-0206'T'06:00:30'Z'"
+        store2!!.nextCloseTime = "2021-0-05'T'06:00:30'Z'"
 
         viewModel = StoreCatalogViewModel()
         viewModel!!.liveData = MutableLiveData(mutableListOf(store!!, store2!!))

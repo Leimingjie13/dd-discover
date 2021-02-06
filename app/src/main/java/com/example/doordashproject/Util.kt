@@ -40,8 +40,6 @@ object Const {
     const val LANDSCAPE_TEXT_SIZE = 30F
 
     const val TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-    // rough offset to get closer to correct time from API values
-    const val TIME_OFFSET = 28_750_000
 
     const val BASE_URL = "https://api.doordash.com"
     const val NA = "n/a"

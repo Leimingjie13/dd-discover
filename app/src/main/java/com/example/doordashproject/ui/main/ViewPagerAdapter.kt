@@ -18,6 +18,8 @@ import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
+const val PAGE_SLOP = 108
+
 class ViewPagerAdapter(
     var vmClient: Client,
     var _fragment: Fragment?,
@@ -32,24 +34,27 @@ class ViewPagerAdapter(
     var lastState: Bundle? = null
 
     lateinit var pager: ViewPager2
+
     var pageChangeCallback: ViewPager2.OnPageChangeCallback =
             object : ViewPager2.OnPageChangeCallback() {
 
-                override fun onPageScrolled(
-                        position: Int,
-                        positionOffset: Float,
-                        positionOffsetPixels: Int
-                ) {
-                    super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-                    isScrolling = true
-                }
                 override fun onPageScrollStateChanged(state: Int) {
                     super.onPageScrollStateChanged(state)
 
                     if (state == ViewPager2.SCROLL_STATE_SETTLING) {
-                        pager.isUserInputEnabled = true
+                        pager.apply {
+                            endFakeDrag()
+                            isUserInputEnabled = true
+                        }
                         isScrolling = false
                     }
+                }
+                override fun onPageScrolled(
+                        position: Int,
+                        positionOffset: Float,
+                        positionOffsetPixels: Int) {
+                    super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                    isScrolling = true
                 }
             }
 
@@ -130,14 +135,14 @@ class ViewPagerAdapter(
                                 holder.id = it
                                 holder.updateViews(vmClient, fragment)
                                 holder.formatForOrientation(
-                                    fragment.resources?.configuration!!.orientation)
+                                    fragment.resources.configuration!!.orientation)
                             }
                         }
                     }
                 } catch (e: Exception) {
                     when (e) {
                        is NoSuchElementException ->
-                           ExceptionHandler.displaySnackbar(
+                           ExceptionHandler.snackbar(
                                "No selected holders in view pager adapter: " + e.message)
                     }
                 }
@@ -198,4 +203,19 @@ class ViewPagerAdapter(
             selectedHolders.remove(event.holder)
         }
     }
+
+    @Subscribe
+    fun onFakeDrag(event: FakeDragEvent) {
+        pager.apply {
+            if (!isFakeDragging && event.drag) {
+                beginFakeDrag()
+            } else if (!event.drag) {
+                endFakeDrag()
+            }
+            fakeDragBy(event.f)
+        }
+    }
 }
+
+class SelectEvent(val holder: BaseViewHolder, val isDown: Boolean)
+class FakeDragEvent(val f: Float, val drag: Boolean)

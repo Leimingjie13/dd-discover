@@ -25,7 +25,10 @@ class StoreViewHolder(binding: ViewBinding, type: Int) : BaseViewHolder(binding,
 
                 data[id]?.run {
                     binding.smallName
-                        .apply { setText(name, TextView.BufferType.EDITABLE) }
+                        .apply {
+                            setText(name, TextView.BufferType.EDITABLE)
+
+                        }
                     binding.smallDescription.text = description
                     binding.smallReadyTime.text =
                         status.asapMinutesRange[0].toString()
@@ -93,7 +96,7 @@ class StoreViewHolder(binding: ViewBinding, type: Int) : BaseViewHolder(binding,
                         .into(binding.coverImage)
                 }
             }
-            else -> ExceptionHandler.displaySnackbar("can't bind children, unknown view type")
+            else -> ExceptionHandler.snackbar("can't bind children, unknown view type")
         }
     }
 
@@ -105,6 +108,7 @@ class StoreViewHolder(binding: ViewBinding, type: Int) : BaseViewHolder(binding,
 
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE)
                     binding.smallName.textSize = Const.LANDSCAPE_TEXT_SIZE
+
             }
             is ItemDetailsBinding -> {
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -112,7 +116,7 @@ class StoreViewHolder(binding: ViewBinding, type: Int) : BaseViewHolder(binding,
                     //  and line them up to the right
                 }
             }
-            else -> ExceptionHandler.displayDialog("can't configure view, unknown type")
+            else -> ExceptionHandler.dialog("can't configure view, unknown type")
         }
     }
 }

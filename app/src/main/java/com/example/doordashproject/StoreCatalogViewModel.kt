@@ -7,6 +7,10 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
+const val DAY_IN_MINS = 1440
+// rough offset to get closer to correct time from API values
+const val TIME_OFFSET = 28_750_000
+
 fun Client.minutesToClose(id: Int) : String {
     val nextClose: Long
     val format = SimpleDateFormat(Const.TIME_PATTERN, Locale.US)
@@ -14,13 +18,14 @@ fun Client.minutesToClose(id: Int) : String {
     try {
         nextClose = format.parse(getById<StoreModel>(id).nextCloseTime)!!.time
     } catch (e: ParseException) {
+        ExceptionHandler.snackbar("Client.minutesToClose: " + e.message)
         return Const.CLOSED
     }
 
     val currentTime = Calendar.getInstance().time.time
 
-    return when (val mins = (nextClose - Const.TIME_OFFSET - currentTime).toInt() / 1000 / 60) {
-        in 1..1440 -> mins.minutesToHours()
+    return when (val mins = (nextClose - TIME_OFFSET - currentTime).toInt() / 1000 / 60) {
+        in 1..DAY_IN_MINS -> mins.minutesToHours()
         in Int.MIN_VALUE..0 -> Const.CLOSED
         else -> Const.OPEN
     }
@@ -29,7 +34,8 @@ fun Client.minutesToClose(id: Int) : String {
 class StoreCatalogViewModel : ViewModel(), Client {
 
     override val clientScope = viewModelScope
-    override var liveData: MutableLiveData<out MutableList<StoreModel>> = MutableLiveData(mutableListOf())
+    override var liveData: MutableLiveData<out MutableList<StoreModel>> =
+        MutableLiveData(mutableListOf())
 
     var dataMap: MutableMap<Int, StoreModel> = mutableMapOf()
 
@@ -58,18 +64,21 @@ class StoreCatalogViewModel : ViewModel(), Client {
         if (dataMap.contains(id)) {
             return viewModelScope.launch {
                 try {
-                    var newStore: StoreModel = StoreRepository.requestDetails(id)
+                    val tmpStore = StoreRepository.requestDetails(id)
 
-                    dataMap[id]?.address = newStore.address
-                    dataMap[id]?.averageRating = newStore.averageRating
-                    dataMap[id]?.phoneNumber = newStore.phoneNumber
-                    dataMap[id]?.offersDelivery = newStore.offersDelivery
-                    dataMap[id]?.offersPickup = newStore.offersPickup
+                    dataMap[id]!!.apply {
+                        address = tmpStore.address
+                        averageRating = tmpStore.averageRating
+                        phoneNumber = tmpStore.phoneNumber
+                        offersDelivery = tmpStore.offersDelivery
+                        offersPickup = tmpStore.offersPickup
+                    }
 
+                    // no structural change, so force refresh
                     liveData.value = liveData.value
                 } catch (e: Exception) {
                     ExceptionHandler
-                            .displayDialog("failed to get store details from network: " + e.message)
+                            .dialog("failed to get store details from network: " + e.message)
                 }
             }
         } else return null

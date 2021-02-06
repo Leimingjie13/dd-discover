@@ -20,7 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/small_name"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -37,14 +37,14 @@
         android:scrollHorizontally="true"
         android:singleLine="true"
         android:inputType="textNoSuggestions"
-        android:text="@string/name"
+        android:text="@string/nothing"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/small_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/small_cover_image"
         app:layout_constraintTop_toTopOf="parent"
-        android:autofillHints="@string/name" />
+        android:autofillHints="@string/nothing" />
 
     <TextView
         android:id="@+id/small_description"
@@ -59,7 +59,7 @@
         android:paddingEnd="2dp"
         android:scrollbarSize="1dp"
         android:scrollbars="vertical"
-        android:text="@string/description"
+        android:text="@string/nothing"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/small_ready_time"

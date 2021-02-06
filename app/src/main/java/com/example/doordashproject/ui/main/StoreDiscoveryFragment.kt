@@ -17,7 +17,8 @@ class StoreDiscoveryFragment : Fragment(R.layout.store_discovery_fragment) {
     lateinit var viewModel: StoreCatalogViewModel
     lateinit var viewPagerAdapter: ViewPagerAdapter
 
-    private var binding: StoreDiscoveryFragmentBinding? = null
+    private var _binding: StoreDiscoveryFragmentBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,9 +30,9 @@ class StoreDiscoveryFragment : Fragment(R.layout.store_discovery_fragment) {
             container: ViewGroup?,
             savedInstanceState: Bundle?,
     ): View {
-        binding =
+        _binding =
             StoreDiscoveryFragmentBinding.inflate(inflater, container, false)
-        return binding!!.discoverPager
+        return binding.discoverPager
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,7 +45,7 @@ class StoreDiscoveryFragment : Fragment(R.layout.store_discovery_fragment) {
             lastState = savedInstanceState
         }
 
-        binding!!.also {
+        binding.also {
             viewPagerAdapter.apply {
                 pager = it.discoverPager
                 this.stateRestorationPolicy =
@@ -62,6 +63,6 @@ class StoreDiscoveryFragment : Fragment(R.layout.store_discovery_fragment) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
     }
 }

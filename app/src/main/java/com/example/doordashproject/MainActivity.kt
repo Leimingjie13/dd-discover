@@ -10,22 +10,22 @@ import org.greenrobot.eventbus.EventBus
 class MainActivity : AppCompatActivity() {
 
     private var _binding: MainActivityBinding? = null
-    private val binding get() = _binding!!
+    //private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         _binding = MainActivityBinding.inflate(layoutInflater).apply {
-            ExceptionHandler.displayToast = {
-                Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show() }
+            ExceptionHandler.toast = {
+                Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show(); 0}
 
-            ExceptionHandler.displayDialog = {
-                AlertDialogFragment(it).show(supportFragmentManager, "alert") }
+            ExceptionHandler.dialog = {
+                AlertDialogFragment(it ?: "ERROR").show(supportFragmentManager, "alert"); 0 }
 
-            ExceptionHandler.displaySnackbar = {
-                Snackbar.make(this.root, it, Snackbar.LENGTH_SHORT).show() }
+            ExceptionHandler.snackbar = {
+                Snackbar.make(root, it ?: "ERROR", Snackbar.LENGTH_SHORT).show(); 0 }
 
-            setContentView(this.root)
+            setContentView(root)
         }
     }
 

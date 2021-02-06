@@ -37,7 +37,7 @@ object StoreRepository {
             val response: Response<StoreModel> = server.details(storeId)
             response.body() ?: StoreModel(Const.DEFAULT_ID)
         } catch (e: Exception) {
-            ExceptionHandler.displayDialog(e.toString())
+            ExceptionHandler.dialog(e.toString())
             StoreModel(Const.DEFAULT_ID)
         }
     }

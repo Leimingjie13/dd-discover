@@ -19,9 +19,10 @@ class ListPageHolder(binding: ViewBinding, type: Int)
     : RecyclerView {
         when (type) {
             Const.TYPE_CATALOG -> {
+                binding as ResultListBinding
                 val catalogAdapter = CatalogSearchAdapter(vmClient, fragment)
 
-                vmClient.liveData.observe(fragment!!, {
+                vmClient.liveData.observe(fragment, {
                     if ((it as MutableList<*>).isNotEmpty()) {
                         catalogAdapter.submitList(it.toList())
                     }
@@ -32,18 +33,19 @@ class ListPageHolder(binding: ViewBinding, type: Int)
                     job.join()
 
                     MainScope().launch {
-                        (binding as ResultListBinding).resultList.apply {
+                        binding.resultList.apply {
                             adapter = catalogAdapter
                             layoutManager =
-                                LinearLayoutManager(fragment!!.requireContext())
+                                LinearLayoutManager(fragment.requireContext())
                             // force live data refresh
-                            vmClient.liveData.value = vmClient.liveData.value
+                            //vmClient.liveData.value = vmClient.liveData.value
                             vmClient.fillDataMap()
                         }
                     }.invokeOnCompletion(callback)
                 }
             }
         }
+        // change when more types are added
         return (binding as ResultListBinding).resultList
     }
 

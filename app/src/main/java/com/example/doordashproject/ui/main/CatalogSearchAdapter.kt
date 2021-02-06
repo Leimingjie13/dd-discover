@@ -1,6 +1,8 @@
 package com.example.doordashproject.ui.main
 
+import android.annotation.SuppressLint
 import android.view.*
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -8,17 +10,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.doordashproject.Client
 import com.example.doordashproject.databinding.SearchItemBinding
 import org.greenrobot.eventbus.EventBus
+import kotlin.math.abs
 
-class CatalogSearchAdapter(var vmClient: Client, var fragment: Fragment?)
+class CatalogSearchAdapter(
+    var vmClient: Client,
+    var _fragment: Fragment?,
+    )
     : ListAdapter<Any, StoreViewHolder>(SearchItemCallback(vmClient)),
     View.OnTouchListener {
 
-    var attachedHolders = hashSetOf<BaseViewHolder>()
+    private val fragment get() = _fragment!!
+    private var lastX = 0F
+    private var xTolerance = 0F
+
+    private var attachedHolders = hashSetOf<BaseViewHolder>()
     var selectedHolders = hashSetOf<BaseViewHolder>()
 
+    // used as intercept touch listener
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
-        view?.performClick()
-
         attachedHolders.find {
             it.itemView == view
 
@@ -34,6 +43,7 @@ class CatalogSearchAdapter(var vmClient: Client, var fragment: Fragment?)
                 }
             }
         }
+        view?.performClick()
         return false
     }
 
@@ -53,10 +63,57 @@ class CatalogSearchAdapter(var vmClient: Client, var fragment: Fragment?)
             binding.root.interceptTouchListeners.add(this@CatalogSearchAdapter) }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: StoreViewHolder, position: Int) {
         holder.id = vmClient.retrieveId(position)
-        holder.updateViews(vmClient, fragment!!)
-        holder.formatForOrientation(fragment?.resources?.configuration!!.orientation)
+        holder.updateViews(vmClient, fragment)
+        holder.formatForOrientation(fragment.resources.configuration!!.orientation)
+
+        (holder.binding as SearchItemBinding).smallDescription
+            .setOnTouchListener { view, event ->
+
+                (view as TextView).apply {
+                    when (event.actionMasked) {
+                        MotionEvent.ACTION_DOWN -> {
+                            holder.binding.root
+                                .requestDisallowInterceptTouchEvent(true)
+                            lastX = event.rawX
+                        }
+                        MotionEvent.ACTION_MOVE -> {
+                            val scrollRange: Int =
+                                lineHeight*(lineCount-1) +
+                                        firstBaselineToTopHeight +
+                                        lastBaselineToBottomHeight -
+                                        height
+
+                            // this is only good for views with a smaller size:scroll ratio
+                            if (event.y > height || event.y <= 0) {
+                                when {
+                                    scrollY <= 0 -> holder.binding.root
+                                        .requestDisallowInterceptTouchEvent(false)
+                                    scrollY >= scrollRange -> holder.binding.root
+                                        .requestDisallowInterceptTouchEvent(false)
+                                }
+                            } else {
+                                val dx = event.rawX - lastX
+                                xTolerance+=dx
+
+                                if (abs(xTolerance) >= PAGE_SLOP) {
+                                    EventBus.getDefault().post( FakeDragEvent(dx, true) )
+                                }
+                                lastX = event.rawX
+                            }
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            holder.binding.root
+                                .requestDisallowInterceptTouchEvent(false)
+                            EventBus.getDefault().post( FakeDragEvent(0F, false) )
+                            xTolerance = 0F
+                        }
+                    }
+                }
+                false
+        }
     }
 
     override fun onViewAttachedToWindow(holder: StoreViewHolder) {
@@ -68,12 +125,13 @@ class CatalogSearchAdapter(var vmClient: Client, var fragment: Fragment?)
     override fun onViewDetachedFromWindow(holder: StoreViewHolder) {
         super.onViewDetachedFromWindow(holder)
         attachedHolders.remove(holder)
+        holder.itemView.setOnTouchListener(null)
         holder.itemView.isEnabled = false
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
-        fragment = null
+        _fragment = null
     }
 }
 
@@ -87,5 +145,3 @@ class SearchItemCallback(private val vmClient: Client)
         return vmClient.compareData(oldItem, newItem)
     }
 }
-
-class SelectEvent(val holder: BaseViewHolder, val isDown: Boolean)

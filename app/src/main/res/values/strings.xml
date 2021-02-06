@@ -30,6 +30,7 @@
     <string name="hrs">Hrs</string>
     <string name="mins">Mins</string>
     <string name="rating_label">Rating</string>
+    <string name="nothing" />
 
     <string name="distance">%1$s mi</string>
     <string name="ready_time">%1$s minutes</string>
